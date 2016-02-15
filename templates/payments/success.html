@@ -1,0 +1,26 @@
+{% extends "master.html" %}
+{% load i18n %}
+
+{% block meta %}
+    <title>Partytask – booking platform for top event professionals and service providers - Success Payment</title>
+{% endblock meta %}
+
+    {% block content %}
+    <div class="header">
+        <span>GREAT</span>
+    </div>
+
+    <div class="column">
+        <div class="paypal_land">
+            <div class="success">
+                <div class="icon ok"></div>
+                Your payment has been succesfully proccessed.
+            </div>   
+            <div class="info">
+                You can view all your appointments {% if request.user.related_with == 'user' %}<a href="/users/bookings">here</a>{% endif %}
+            </div>
+        </div>
+    </div>
+    {% endblock content %}
+</body>
+</html>

@@ -1,0 +1,60 @@
+{% extends "master.html" %}
+{% load i18n %}
+{% load thumbnail %}
+
+    {% block meta %}
+        <title>Partytask – booking platform for top event professionals and service providers - All Listings</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=9" />
+    {% endblock meta %}
+
+    {% block title %}
+        Listings
+    {% endblock title %}
+
+    {% block content %}
+    <div class="column">
+            <ul class="gallery col_4">
+                {% for listing in listings %}
+                <li class="pic_view">
+                    <ul>
+                        <li class="picture">
+                        <a href="/listings/{{ listing.id }}">
+                            {% thumbnail listing.get_picture "240x143" crop="center" as im %}
+                                <img src="{{ im.url }}" {% if not listing.status == 1 %}class="deactivated"{% endif %}>
+                            {% empty %}
+                                tc
+                            {% endthumbnail %}
+                        </a>
+                        </li>
+                        <li class="text">
+                            <div class="title">{{ listing.title }}</div>
+                            <p>
+                                <div class="heart">{{ listing.likes }}</div>
+                                <div class="price">$ {{ listing.price|floatformat:-2 }}</div>
+                                <div class="comments">{{ listing.comments }}</div>
+                            </p>
+                        </li>
+                        {% if listing.status == 1 %}
+                        <li class="delete"><a href="/listings/delete/{{ listing.id }}" class="new_button red nb_hover">Deactivate</a></li>
+                        {% elif listing.status == 2 %}
+                        <li class="delete"><a href="/listings/activate/{{ listing.id }}" class="new_button green nb_hover">Activate</a></li>
+                        {% elif listing.status == 0 %}
+                        <li class="pending">Pending<br/>(Currently we are reviewing your listing)</li>
+                        {% else %}
+                        <li class="forbidden">Forbidden<br/>(The content is not appropriate for this website)</li>
+                        {% endif %}
+                    </ul>
+                </li>
+                {% endfor %}
+            </ul>
+            </div>
+        </div>
+    </div>
+
+    {% endblock content %}
+
+    {% block scripts %}
+
+    {% endblock scripts %}
+</body>
+</html>

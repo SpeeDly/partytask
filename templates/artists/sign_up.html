@@ -1,0 +1,253 @@
+{% extends "master.html" %}
+{% load thumbnail %}
+{% load i18n %}
+
+{% block meta %}
+    <title>Partytask – booking platform for top event professionals and service providers - Sign Up</title>
+{% endblock meta %}
+
+{% block stylesheets %}
+    <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}/css/select2.css">
+    <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}/css/imgselectarea.css">
+{% endblock stylesheets %}
+
+    {% block content %}
+<div id="content">
+    <div class="header">
+        <span>SIGN UP</span>
+    </div>
+
+    <div class="column">
+
+        <ul class="progressbar forms">
+            <li class="active"><span>STEP 1</span></li>
+            <li {% if request.GET.step == '2' or request.GET.step == '3' or request.GET.step == '4' %}class="active"{% endif %}><span>STEP 2</span></li>
+            <li {% if request.GET.step == '3' or request.GET.step == '4' %}class="active"{% endif %}><span>STEP 3</span></li>
+            <li {% if request.GET.step == '4' %}class="active"{% endif %}><span>STEP 4</span></li>
+        </ul>
+        
+        <div class="forms" {% if request.GET.step != '1' %}style="display: none"{% endif %}>
+            <form class="login" method="POST">
+                {% csrf_token %}
+
+                <ul>
+                    <li><label for="" class="main_label">
+                        {% if form.name.errors %}
+                            {{ form.name.errors }}
+                        {% endif %}
+                        Name</label></li>
+                    <li>
+                        {{ form.name }}
+                    </li>
+                    <li><label for="" class="main_label">
+                        {% if form.email.errors %}
+                            {{ form.email.errors }}
+                        {% endif %}
+                        Email</label></li>
+                    <li>
+                        {{ form.email }}
+                    </li>
+                    <li><label for="" class="main_label">
+                        {% if form.password.errors %}
+                            {{ form.password.errors }}
+                        {% endif %}
+                        Password</label></li>
+                    <li>
+                        {{ form.password }}
+                    </li>
+                    <li><label for="" class="main_label">
+                        {% if form.confirm_password.errors %}
+                            {{ form.confirm_password.errors }}
+                        {% endif %}
+                        Confirm Password</label></li>
+                    <li>
+                        {{ form.confirm_password }}
+                    </li>
+                    <li>
+                        <input type="submit" value="Register">
+                    </li>
+                    <li class="or">
+                        <div></div>
+                        <div class="or"> OR </div>
+                    </li>
+                    <li class="facebook">
+                        <div class="facebook_icon"></div>
+                        <input type="button" value="Register using Facebook" onclick="register_me('artist')">
+                        <div class="fb-login-button" data-perms="email" data-scope="email" data-max-rows="1" data-show-faces="false"></div>
+                        <div id="fb-root"></div>
+                    </li>
+                </ul>
+            </form>
+        </div>
+
+        <div class="forms" {% if request.GET.step != '2' %}style="display: none"{% endif %}>
+            <form id="step_2" class="login" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <ul>
+                    <li><label for="" class="main_label">
+                        {% if form.style.errors %}
+                            {{ form.style.errors }}
+                        {% endif %}
+                        1. What is your business?</label></li>
+                    <li>
+                        {{ form.style }}
+                    </li>
+                    <li><label for="" class="main_label">
+                        {% if form.specific_style.errors %}
+                            {{ form.specific_style.errors }}
+                        {% endif %}
+                        2. Can you please specify?</label></li>
+                    <li>
+                        {{ form.specific_style }}
+                    </li>
+                    <li><label for="" class="main_label">
+                        {% if form.avatar.errors %}
+                            {{ form.avatar.errors }}
+                        {% endif %}
+                        {{form.cropped_image}}
+                        3. Upload profile picture</label></li>
+                    <li>
+                        {% thumbnail request.user.artist.get_avatar "150x150" crop="center" as im %}
+                            <img id="preview" src="{{ im.url }}">
+                        {% endthumbnail %}
+                        <div class="upload_button">Click here to upload picture</div>
+                        {{ form.avatar}}
+                    </li>
+                    <li><label for="" class="main_label">
+                        {% if form.description.errors %}
+                            {{ form.description.errors }}
+                        {% endif %}
+                        4. Introduce yourself</label></li>
+                    <li>
+                        {{ form.description }}
+                    </li>
+                    <li>
+                        <input type="submit" value="Save and continue">
+                    </li>
+                </ul>
+            </form>
+        </div>
+
+        <div class="forms" {% if request.GET.step != '3' %}style="display: none"{% endif %}>
+            <form class="login" method="POST">
+                {% csrf_token %}
+
+                <ul>
+                    <li><label for="" class="main_label">
+                        {% if form.address.errors %}
+                            {{ form.address.errors }}
+                        {% endif %}
+                        1. Submit your location</label></li>
+                    <li><label for="" class="main_label">
+                        {{ form.address }}
+                        {{ form.lat }}
+                        {{ form.lng }}
+                    </label></li>
+                    <li id="maps">
+                    </li>
+
+                    <li>
+
+                    </li>
+
+                    <li><label for="" class="main_label">
+                        {% if form.mobile_number.errors %}
+                            {{ form.mobile_number.errors }}
+                        {% endif %}
+                        2. Enter your phone number</label></li>
+                    <li>
+                        {{ form.mobile_number }}
+                    </li>
+
+                    <li>
+                        <input type="submit" value="Save and continue">
+                    </li>
+                </ul>
+            </form>
+        </div>
+
+        <div class="forms" {% if request.GET.step != '4' %}style="display: none"{% endif %}>
+            <form class="login listing_upload" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <ul>
+                    <li id="gallery_preview" class="multiple_listing">
+                        <ul>
+                            
+                        </ul>
+                    </li>
+
+                    <li class="photos_upload">
+                        {% if form.cover.errors %}
+                            <div class="wrong_picture">{{ form.cover.errors }}</div>
+                        {% endif %}
+                        <div class="upload_button">Click here to upload picture</div>
+                        <input type="file" name="pictures" id="id_picture" class="custom_button active_input" multiple/>
+                        {{ form.cover }}
+                    </li>
+                    <li><label for="" class="main_label">
+                        {% if form.title.errors %}
+                            {{ form.title.errors }}
+                        {% endif %}
+                        1. Title</label></li>
+                    <li>
+                        {{ form.title }}
+                    </li>
+                    <li><label for="" class="main_label">
+                        {% if form.description.errors %}
+                            {{ form.description.errors }}
+                        {% endif %}
+                        2. Description</label></li>
+                    <li>
+                        {{ form.description }}
+                    </li>
+                    <li></li>
+                    <li class="price"><label for="" class="main_label">
+                        {% if form.price.errors %}
+                            {{ form.price.errors }}
+                        {% endif %}
+                        3. Price</label>
+                    </li>
+                    <li class="price">
+                        {{ form.price }}
+                    </li>
+                    <li class="style"><label for="" class="main_label">
+                        {% if form.duration.errors %}
+                            {{ form.duration.errors }}
+                        {% endif %}4. Duration</label>
+                        {{ form.duration }}</li>
+
+                    <li><label for="" class="main_label">
+                        {% if form.tags.errors %}
+                            {{ form.tags.errors }}
+                        {% endif %}
+                        5. Tags</label></li>
+                    <li>
+                        {{ form.tags }}
+                    </li>
+
+                    <li>
+                        <input type="submit" value="Save and continue">
+                    </li>
+                </ul>
+            </form>
+        </div>
+
+    </div>
+</div>
+
+    {% endblock content %}
+    {% block scripts %}
+        <script src="{{STATIC_URL}}js/error.js"></script>
+        <script src="{{STATIC_URL}}js/preview.js"></script>
+        <script src="http://connect.facebook.net/en_US/all.js"></script>
+        <script src="{{STATIC_URL}}js/facebook.js"></script>
+        <script type="text/javascript" src="{{STATIC_URL}}js/upload_listing.js"></script>
+        <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?libraries=places&sensor=false"></script>
+        <script type="text/javascript" src="{{STATIC_URL}}js/google_maps_controller.js"></script>
+        <script type="text/javascript" src="{{STATIC_URL}}js/select2.js"></script>
+        <script type="text/javascript" src="{{STATIC_URL}}js/imgSelectArea.js"></script>
+    {% endblock scripts %}
+</body>
+</html>

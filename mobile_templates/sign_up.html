@@ -1,0 +1,36 @@
+{% extends "master.html" %}
+{% load i18n %}
+
+{% block meta %}
+    <title>Partytask – booking platform for top event professionals and service providers - Sign Up</title>
+{% endblock meta %}
+    
+    {% block title %}
+        Who you are
+    {% endblock title %}
+
+    {% block content %}
+
+    <div class="column">
+        <div id="who_you_are">
+            <a href="/users/sign_up">
+                <div><div class="profile"></div></div>
+                <ul>
+                    <li class="title">Party Organizer</li>
+                    <li class="content">You will be able to find top event service providers and directly book their offers. You may even follow your favorite event professionals and get feed with their latest offers.</li>
+                </ul>
+            </a>
+            <a href="/artists/sign_up?step=1">
+                <div><div class="artist"></div></div>
+                <ul>
+                    <li class="title">Party Vendor</li>
+                    <li class="content">You may upload your offers and attract new custommers. In addition, you will get booking management tools, appointments calendar and statistics. And yes, it`s FREE.</li>
+                </ul>
+            </a>
+        </div>
+    </div>
+
+    {% endblock content %}
+    {% block scripts %}
+
+    {% endblock scripts %}

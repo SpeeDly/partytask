@@ -1,0 +1,29 @@
+{% extends "master.html" %}
+{% load i18n %}
+
+{% block meta %}
+    <title>Partytask – booking platform for top event professionals and service providers - Success Payment</title>
+{% endblock meta %}
+
+    {% block title %}
+    OH, NO !
+    {% endblock title %}
+
+    {% block content %}
+    <div class="column">
+        <div class="paypal_land">
+            <div class="error">
+                <div class="error"></div>
+                ERROR 404
+            </div>
+            <div>
+                <img src="{{ STATIC_URL }}img/404.png" alt="scissor">
+            </div>
+            <div class="info">
+                Something went wrong !
+            </div>
+        </div>
+    </div>
+    {% endblock content %}
+</body>
+</html>

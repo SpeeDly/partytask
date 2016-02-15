@@ -1,0 +1,248 @@
+{% extends "master.html" %}
+{% load i18n %}
+{% load thumbnail %}
+{% load humanize %}
+
+
+    {% block meta %}
+        <title>Partytask – booking platform for top event professionals and service providers - Artist Profile</title>
+    {% endblock meta %}
+
+    {% block stylesheets %}
+    <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}/css/rateit.css">
+    {% endblock stylesheets %}
+
+    {% block content %}
+<div id="content">
+    <div class="header">
+        <span>ARTIST PROFILE</span>
+    </div>
+
+    <div class="column">
+        <ul id="aritst_profile">
+            <li class="left_column">
+                <ul class="main_info">
+                    <li>
+                        <ul>
+                            <li class="profile_pic">
+                                {% thumbnail artist.get_avatar "150x150" crop="center" as im %}
+                                    <img src="{{ im.url }}">
+                                {% empty %}
+                                    <img src="{{ STATIC_URL }}img/default.png" style="width: 150px; height: 150px;">
+                                {% endthumbnail %}
+                            </li>
+                            <li>
+                                {{artist.user.first_name}}
+                            </li>
+                            <li class="type_style {{artist.get_style|lower}}">{{artist.specific_style}}</li>
+                            <li class="rating"><div class="rateit bigstars" data-rateit-value="{{ rate }}" data-rateit-ispreset="true" data-rateit-readonly="true" data-rateit-starwidth="22" data-rateit-starheight="21"></div></li>
+                            <li class="follower">
+                            {% if request.user.is_authenticated %}
+                                {% if request.user.artist == artist %}
+                                    <a href="/artists/settings/profile" class="new_button red nb_hover">Settings</a>
+                                {% else %}
+                                    {% if is_follower %}
+                                        <a href="?followed=0" class="new_button red nb_hover">Unfollow</a>
+                                    {% else %}
+                                        <a href="?followed=1&current_time={% now 'U' %}" class="new_button green nb_hover" title="You must be registred, to use this feature.">Follow</a>
+                                    {% endif %}
+                                {% endif %}
+                            {% else %}
+                                <a class="new_button green disabled">Follow</a>
+                            {% endif %}
+                            </li>
+                            <li>Cancellation Rate: {{ artist.get_cancellation_rate }}%</li>
+                        </ul>
+                    </li>
+                </ul>
+                <ul class="add_info">
+                    <li>
+                        <div class="work_head">Work time</div>
+                        <ul>
+                            <li>Sunday: {{ work_time.sunday }}</li>
+                            <li>Monday: {{ work_time.monday }}</li>
+                            <li>Tuesday: {{ work_time.tuesday }}</li>
+                            <li>Wednesday: {{ work_time.wednesday }}</li>
+                            <li>Thursday: {{ work_time.thursday }}</li>
+                            <li>Friday: {{ work_time.friday }}</li>
+                            <li>Saturday: {{ work_time.saturday }}</li>
+                        </ul>
+
+                    </li>
+                </ul>
+            </li>
+            <li class="right_column">
+                <ul class="nav_bar">
+                    <li class="clickable active"><a href="javascript:;"><span></span>Listings ({{listings|length}})</a></li>
+                    <li class="clickable"><a href="javascript:;"><span></span>Reviews ({{reviews|length}})</a></li>
+                    <li class="clickable"><a href="javascript:;"><span></span>Followers ({{profiles|length}})</a></li>
+                    <li class="clickable"><a href="javascript:;"><span></span>Location</a></li>
+                </ul>
+                <div class="clear"></div>
+
+                <div class="reviews styled">
+                    {% if reviews|length %}
+                    {% for review in reviews %}
+                    <div class="review">
+                        <div class="left">
+                            <a href="/users/profile/{{ review.client_id }}">
+                            {% thumbnail review.client.get_avatar "60x60" crop="center" as im %}
+                                <img class="clickable" src="{{ im.url }}">
+                            {% empty %}
+                                <img src="{{ STATIC_URL }}img/default.png" style="width: 60px; height: 60px;">
+                            {% endthumbnail %}
+                            </a>
+                        </div>
+                        <div class="right">
+                            <div class="text">{{ review.text }}</div>
+                            <div class="info">
+                                <span class="name">{{ review.client.user.first_name }}</span>
+                                <span class="ago">{{ review.created|naturaltime }}</span>
+                                <div class="rateit bigstars" data-rateit-value="{{ review.rating }}" data-rateit-ispreset="true" data-rateit-readonly="true" data-rateit-starwidth="22" data-rateit-starheight="21"></div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    {% else %}
+                        <div class="nothing">Currently the artist doesn't have any reviews</div>
+                    {% endif %}
+                </div>
+
+                <div class="listings">
+                {% if listings %}
+                <ul class="gallery col_3">
+                    {% for listing in listings %}
+                    <li class="pic_view">
+                        <ul>
+                            <li class="picture">
+                            <a href="/listings/{{listing.id}}">
+                                {% thumbnail listing.get_picture "240x143" crop="center" as im %}
+                                    <img src="{{ im.url }}">
+                                {% empty %}
+                                    tc
+                                {% endthumbnail %}
+                                <div class="overlay"></div>
+                            </a>
+                            </li>
+                            <li class="text">
+                                <div class="title">{{ listing.title }}</div>
+                                <p>
+                                    <div class="heart">{{ listing.likes }}</div>
+                                    <div class="price">$ {{ listing.price|floatformat:-3 }}</div>
+                                    <div class="comments">{{ listing.comments }}</div>
+                                </p>
+                            </li>
+                        </ul>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <div class="nothing">Currently the artist doesn't have any listings</div>
+                {% endif %}
+                </div>
+
+                <div class="followers">
+                {% if profiles %}
+                <ul>
+                {% for profile in profiles %}
+                    <li class="followed">
+                        <a href="/users/profile/{{ profile.id }}">
+                        <ul>
+                            <li class="avatar">
+                                {% thumbnail profile.get_avatar "90x90" crop="center" as im %}
+                                    <img src="{{ im.url }}">
+                                {% empty %}
+                                    <img src="{{ STATIC_URL }}img/default.png" style="width: 90px; height: 90px;">
+                                {% endthumbnail %}
+                            </li>
+                            <li class="name" title="{{ profile.user.first_name }}"> {% if profile.user.first_name|length > 13 and not " " in profile.user.first_name %}{{ profile.user.first_name|truncatechars:13 }}{% else %}{{profile.user.first_name}}{% endif %}</li>
+                        </ul>
+                        </a>
+                    </li>
+                {% endfor %}
+                </ul>
+                {% else %}
+                <div class="nothing">Currently the artist doesn't have any followers</div>
+                {% endif %}
+                </div>
+
+                <div id="location">
+                    
+                </div>
+            </li>
+        </ul>
+
+    </div>
+</div>
+
+    {% endblock content %}
+
+    {% block scripts %}
+        <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?libraries=places&sensor=false"></script>
+        <script src="{{STATIC_URL}}js/jquery.rateit.min.js"></script>
+        <script type="text/javascript">
+        $(document).ready(function(){
+            var map_canvas = document.createElement('div');
+            map_canvas.id = 'map_canvas';
+            map_canvas.style.height = '400px';
+            map_canvas.style.width = '750px';
+
+            document.getElementById('location').appendChild(map_canvas);
+
+            var coords = new google.maps.LatLng({{ artist.lat }}, {{ artist.lng }});
+            
+            var options = {
+                zoom: 17,
+                center: coords,
+                mapTypeControl: false,
+                navigationControlOptions: {
+                    style: google.maps.NavigationControlStyle.SMALL
+                },
+                mapTypeId: google.maps.MapTypeId.ROADMAP
+            };
+            
+            var map = new google.maps.Map(document.getElementById("map_canvas"), options);
+            var marker = new google.maps.Marker({
+                position: coords,
+                map: map,
+                title:"You are here!",
+            });
+            $('.listings').show();
+            $('.reviews').hide();
+            $('.followers').hide();
+            $('#location').hide();
+            $ (".nav_bar li").click(function(){
+                $(this).parent().children().removeClass("active");
+                $(this).addClass("active")
+                if ($(this).index() == 0){
+                    $('.listings').show();
+                    $('.reviews').hide();
+                    $('.followers').hide();
+                    $('#location').hide();
+                }
+                else if($(this).index() == 1){
+                    $('.listings').hide();
+                    $('.reviews').show();
+                    $('.followers').hide();
+                    $('#location').hide();
+                }
+                else if ($(this).index() == 2){
+                    $('.listings').hide();
+                    $('.reviews').hide();
+                    $('.followers').show(); 
+                    $('#location').hide();
+                }
+                else{
+                    $('.listings').hide();
+                    $('.reviews').hide();
+                    $('.followers').hide(); 
+                    $('#location').show();
+                    google.maps.event.trigger(map, "resize");
+                    map.setCenter(coords);
+                }
+            });
+        });
+        </script>
+    {% endblock scripts %}
+</body>
+</html>

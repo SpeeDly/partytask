@@ -1,0 +1,176 @@
+{% extends "master.html" %}
+{% load i18n %}
+{% load thumbnail %}
+{% load humanize %}
+
+{% block meta %}
+    <title>Partytask – booking platform for top event professionals and service providers - Profile</title>
+{% endblock meta %}
+
+    {% block stylesheets %}
+    <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}/css/rateit.css">
+    {% endblock stylesheets %}
+
+    {% block title %}
+        Profile
+    {% endblock title %}
+
+    {% block content %}
+    <div id="profile" class="seeker">
+        <div class="wrapper">
+            <div class="profile_background"></div>
+            <div class="profile_overlay"></div>
+            <ul class="profile_content">
+                <li class="profile_pic">
+                    {% thumbnail profile.get_avatar "90x90" crop="center" as im %}
+                        <img src="{{ im.url }}">
+                    {% empty %}
+                        <img src="{{ STATIC_URL }}img/default.png" style="width: 90px; height: 90px;">
+                    {% endthumbnail %}
+                </li>
+                <li>{{profile.user.first_name}}</li>
+                <li class="type_style">Beauty Seeker</li>
+                <li>
+                    {% if request.user.profile == profile %}
+                        <a href="/users/settings/profile" class="new_button green nb_hover">Settings</a>
+                    {% endif %}
+                </li>
+                <li class="controllers">
+                    <div class="overlay"></div>
+                    <ul class="nav_bar">
+                        <li class="clickable active"><a href="javascript:;">LISTINGS</a></li>
+                        <li class="clickable"><a href="javascript:;">REVIEWS</a></li>
+                        <li class="clickable"><a href="javascript:;">FOLLOWERS</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+        <div class="tab_wrapper">
+            <div id="listings">
+                {% if listings %}
+                <ul class="gallery">
+                    {% for listing in listings %}
+                    <li class="pic_view">
+                        <ul>
+                            <li class="picture">
+                            <a href="/listings/{{listing.id}}">
+                                {% thumbnail listing.get_picture "240x143" crop="center" as im %}
+                                    <img src="{{ im.url }}">
+                                {% empty %}
+                                    tc
+                                {% endthumbnail %}
+                            </a>
+                            </li>
+                            <li class="text">
+                                <div class="title">{{ listing.title }}</div>
+                                <p>
+                                    <div class="heart">{{ listing.likes }}</div>
+                                    <div class="price">$ {{ listing.price }}</div>
+                                    <div class="comments">{{ listing.comments }}</div>
+                                </p>
+                            </li>
+                        </ul>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <div class="nothing">Currently the artist doesn't have any listings</div>
+                {% endif %}
+            </div>
+            <div id="reviews">
+                {% if reviews|length %}
+                {% for review in reviews %}
+                <div class="review">
+                    <div class="left">
+                        <a href="/users/profile/{{ review.client_id }}">
+                        {% thumbnail review.client.get_avatar "60x60" crop="center" as im %}
+                            <img class="clickable" src="{{ im.url }}">
+                        {% empty %}
+                            <img src="{{ STATIC_URL }}img/default.png" style="width: 60px; height: 60px;">
+                        {% endthumbnail %}
+                        </a>
+                    </div>
+                    <div class="right">
+                        <div class="text">{{ review.text }}</div>
+                        <div class="info">
+                            <span class="name">{{ review.client.user.first_name }}</span>
+                            <span class="ago">{{ review.created|naturaltime }}</span>
+                            <div class="rateit bigstars" data-rateit-value="{{ review.rating }}" data-rateit-ispreset="true" data-rateit-readonly="true" data-rateit-starwidth="22" data-rateit-starheight="21"></div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                {% else %}
+                    <div class="nothing">Currently the artist doesn't have any reviews</div>
+                {% endif %}
+            </div>
+            <div id="followers">
+            {% if artists %}
+            <ul>
+            {% for artist in artists %}
+                <li class="followed">
+                    <a href="/artists/profile/{{ artist.id }}">
+                    <ul>
+                        <li class="avatar">
+                            {% thumbnail artist.get_avatar "90x90" crop="center" as im %}
+                                <img src="{{ im.url }}">
+                            {% empty %}
+                                <img src="{{ STATIC_URL }}img/default.png" style="width: 90px; height: 90px;">
+                            {% endthumbnail %}
+                        </li>
+                        <li class="name">{{ artist.user.first_name }}</li>
+                    </ul>
+                    </a>
+                </li>
+            {% endfor %}
+            </ul>
+            {% else %}
+            <div class="nothing">Currently the user doesn't followed any artist</div>
+            {% endif %}
+            </div>
+        </div>
+    </div>
+
+    {% endblock content %}
+
+    {% block scripts %}
+        <script src="{{STATIC_URL}}js/jquery.rateit.min.js"></script>
+        <script type="text/javascript">
+        $(document).ready(function(){
+
+            $('#listings').show();
+            $('#reviews').hide();
+            $('#followers').hide();
+
+            $ (".nav_bar li").click(function(){
+                $(this).parent().children().removeClass("active");
+                $(this).addClass("active")
+
+                if ($(this).index() == 0){
+                    $('#listings').show();
+                    $('#reviews').hide();
+                    $('#followers').hide();
+                }
+                else if($(this).index() == 1){
+                    $('#listings').hide();
+                    $('#reviews').show();
+                    $('#followers').hide();
+                }
+                else if ($(this).index() == 2){
+                    $('#listings').hide();
+                    $('#reviews').hide();
+                    $('#followers').show();
+                }
+                else{
+                    $('#listings').hide();
+                    $('#reviews').hide();
+                    $('#followers').show();
+                    google.maps.event.trigger(map, "resize");
+                    map.setCenter(coords);
+                }
+            });
+        });
+        </script>
+    {% endblock scripts %}
+</body>
+</html>

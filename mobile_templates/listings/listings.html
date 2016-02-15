@@ -1,0 +1,55 @@
+{% extends "master.html" %}
+{% load i18n %}
+{% load thumbnail %}
+
+{% block meta %}
+    <title>Partytask – booking platform for top event professionals and service providers - Listings</title>
+{% endblock meta %}
+
+    {% block title %}
+        Whishlist
+    {% endblock title %}
+
+    {% block content %}
+    <ul class="gallery">
+        {% for listing in listings %}
+        <li class="pic_view">
+            <ul>
+                <a href="/listings/{{ listing.id }}">
+                <li class="picture">
+                    {% thumbnail listing.get_picture "240x143" crop="center" as im %}
+                        <img src="{{ im.url }}">
+                    {% empty %}
+                        tc
+                    {% endthumbnail %}
+                </li>
+                </a>
+                <li class="text">
+                    <div class="title">{{ listing.title }}</div>
+                    <p>
+                        <div class="heart">{{ listing.likes }}</div>
+                        <div class="price">$ {{ listing.price }}</div>
+                        <div class="comments">{{ listing.comments }}</div>
+                    </p>
+                </li>
+                <li class="artist">
+                    <a href="/artists/profile/{{ listing.artist_id }}">
+                    {% thumbnail listing.artist.get_avatar "60x60" crop="center" as im %}
+                        <img src="{{ im.url }}">
+                    {% empty %}
+                        tc
+                    {% endthumbnail %}
+                    </a>
+                </li>
+            </ul>
+        </li>
+        {% endfor %}
+    </ul>
+
+    {% endblock content %}
+
+    {% block scripts %}
+
+    {% endblock scripts %}
+</body>
+</html>

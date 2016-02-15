@@ -1,0 +1,166 @@
+{% load url from future %}
+{% load thumbnail %}
+{% load i18n %}
+
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        {% block meta %}
+            <title>Glamazer</title>
+        {% endblock meta %}
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width">
+        <meta name="robots" content="noindex">
+        <!--CSS block-->
+        <link rel="shortcut icon" href="{{ STATIC_URL }}img/favicon.ico" />
+        <link rel="stylesheet" href="{{ STATIC_URL }}css/mobile_style.css">
+        {% block stylesheets %}
+        
+        {% endblock stylesheets %}
+
+        {% block tweeter %}
+        
+        {% endblock tweeter %}
+
+    </head>
+    <body>
+
+        <!-- Navigation bar -->
+        <div id="header">
+            {% csrf_token %}
+            <div class="back {% if request.path == "/" %}not_visible{% endif %}"><a class="icon back" href="javascript:history.back()"></a></div>
+            <div class="title">{% block title %}{% endblock title %}</div>
+            <div class="menu {% if not request.user.is_authenticated %}not_visible{% endif %}"><a class="icon menu" href="javascript:;"></a></div>
+        </div>
+
+        <!--Content block-->
+        <div id="content">
+            {% block content %}
+            {% endblock content %}
+        </div>
+        <!-- Footer -->
+        <div id="footer">
+            {% if request.user.is_authenticated %}
+                {% if request.user.related_with == 'profiles' %}
+                <ul>
+                    <li><div class="middled"><a href="/" class="icon foot_nav home{% if '/' == request.path %} active{% endif %}"></a></div></li>
+                    <li><div class="middled"><a href="/users/bookings" class="icon foot_nav calendar{% if 'bookings' in request.path %} active{% endif %}"></a></div></li>
+                    <li><div class="middled"><a href="/users/whishlist" class="icon foot_nav liked{% if 'whishlist' in request.path %} active{% endif %}"></a></div></li>
+                    <li><div class="middled"><a href="/users/notifications" class="icon foot_nav notification{% if 'notifications' in request.path %} active{% endif %}"></a></div></li>
+                    <li><div class="middled"><a href="/users/profile" class="icon foot_nav profile{% if 'users/profile' == request.path %} active{% endif %}"></a></div></li>
+                </ul>
+                {% elif request.user.related_with == 'artists' %}
+                <ul>
+                    <li><div class="middled"><a href="/artists/upload" class="icon foot_nav upload{% if 'upload' in request.path %} active{% endif %}"></a></div></li>
+                    <li><div class="middled"><a href="/artists/bookings" class="icon foot_nav calendar{% if 'bookings' in request.path %} active{% endif %}"></a></div></li>
+                    <li><div class="middled"><a href="/artists/wallet" class="icon foot_nav money {% if 'wallet' in request.path %} active{% endif %}"></a></div></li>
+                    <li><div class="middled"><a href="/artists/notifications" class="icon foot_nav notification{% if 'notifications' in request.path %} active{% endif %}"></a></div></li>
+                    <li><div class="middled"><a href="/artists/profile" class="icon foot_nav profile{% if 'artists/profile' == request.path %} active{% endif %}"></a></div></li>
+                </ul>
+                {% else %}
+                {% endif %}
+            {% else %}
+                <ul class="not_logged">
+                    <li><div class="middled log_in"><a href="/users/login/">Log In</a></div></li>
+                    <li><div class="middled sign_up"><a href="/sign_up" >Sign Up</a></div></li>
+                </ul>
+            {% endif %}
+        </div>
+        <!-- menu -->
+<!--         <div id='menu'>
+            
+        </div> -->
+    <!-- Script block -->
+    {% if user.is_authenticated %}
+    <div class="left_slider overlay hidden"></div>
+    <div id="left_slider" class="hidden">
+        <ul>
+            <li class="avatar">
+                {% if request.user.related_with == "profiles" %}
+                <a href="/users/profile">
+                    {% thumbnail request.user.profile.get_avatar "160x160" crop="center" as im %}
+                        <img src="{{ im.url }}">
+                    {% empty %}
+                        <img src="{{ STATIC_URL }}img/default.png">
+                    {% endthumbnail %}
+                </a>
+                {% elif request.user.related_with == "artists" %}
+                <a href="/artists/profile">
+                    {% thumbnail request.user.artist.get_avatar "160x160" crop="center" as im %}
+                        <img src="{{ im.url }}">
+                    {% empty %}
+                        <img src="{{ STATIC_URL }}img/default.png">
+                    {% endthumbnail %}
+                </a>
+                {% endif %}
+            </li>
+            <li class="name">{{ request.user.first_name }}</li>
+            <li class="service"><a href="/hair">Hair</a></li>
+            <li class="service"><a href="/nails">Nails</a></li>
+            <li class="service"><a href="/make_up">Make Up</a></li>
+            <li class="search_text">Search</li>
+            <li class="search_box">
+                <form action='{% url 'result' %}' method="GET">
+                <input type='text' name="q">
+                <input type='submit' value="">
+                <div class="search_icon"></div>
+                </form>
+            </li>
+            <li class="logout search_text"><a href="/users/logout">Log out</a></li>
+            <li></li>
+        </ul>
+    </div>
+    {% endif %}
+
+    <script src="{{STATIC_URL}}js/jquery.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}js/moment.js"></script>
+    <script type="text/javascript">
+    $('.menu').click(function(){
+        if(!$(this).hasClass("active")){
+            $(this).addClass("active");
+            $(".left_slider.overlay").removeClass("hidden");
+            $('#left_slider').stop().removeClass("hidden").animate({
+                    width: '75%',
+                }, 500)
+        }
+        else{
+            $(this).removeClass("active");
+            $('#left_slider').stop().animate({
+                    width: '0px',
+                }, 500,function(){$(this).addClass("hidden")})
+        }
+    });
+
+    $(".left_slider.overlay").click(function(){
+        $(this).addClass("hidden");
+        $(".menu").removeClass("active");
+        $('#left_slider').stop().animate({
+                width: '0px',
+            }, 500,function(){$(this).addClass("hidden")})
+    })
+    
+    $(".message .close a").click(function(){
+        $(this).closest(".message").remove();
+    })
+
+
+    function getUrlVars() {
+        var vars = {};
+        var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi,    
+        function(m,key,value) {
+          vars[key] = value;
+        });
+        return vars;
+    }
+    
+    </script>
+    {% block scripts %}
+    {% endblock scripts %}
+
+    </body>
+</html>

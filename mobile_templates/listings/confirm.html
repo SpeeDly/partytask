@@ -1,0 +1,109 @@
+{% extends "master.html" %}
+{% load thumbnail %}
+{% load i18n %}
+
+{% block meta %}
+    <title>Partytask – booking platform for top event professionals and service providers - Confirm Listing</title>
+{% endblock meta %}
+
+    {% block title %}
+    Confirm booking
+    {% endblock title %}
+
+    {% block content %}
+        <div class="column">
+            <ul class="booking_preview">
+                <li class="note">
+                    <span>IMPORTANT !</span><br/>
+                    Please provide your payment details below. Your card is not going to be charged now, Payment will occur automatically only when the beauty artist accepts your request. If the beauty artist declines your request, no payment will occur.
+                </li>
+                <li class="picture">
+                    <span>
+                        {% thumbnail booking.listing.get_picture "470x264" crop="center" as im %}
+                            <img src="{{ im.url }}">
+                        {% empty %}
+                            tc
+                        {% endthumbnail %}
+                    </span>
+                </li>
+                <li>
+                    Beauty artist:
+                    <span>
+                        {{ booking.artist.user.first_name }}
+                    </span>
+                </li>
+                <li class="start_time">
+                    Start time:
+                    <span>
+                    </span>
+                </li>
+                <li class="end_time">
+                    End time:
+                    <span>
+                    </span>
+                </li>
+                <li>
+                    Cost:
+                    <span>
+                        ${{booking.price|floatformat:-3}}
+                    </span>
+                </li>
+                <li>
+                    Address: 
+                    <span>
+                    </span>
+                </li>
+                <li>
+                    Cancellation policy:
+                    <span>
+                        {% if booking.cancellation_policy_id == 1 %}
+                        Free: Full refund, except fees
+                        {% elif booking.cancellation_policy_id == 2 %}
+                            Flexible: 50% refund 12 hours prior the apoointment, except fees
+                        {% elif booking.cancellation_policy_id == 3 %}
+                            Moderate: 50% refund up until 2 days prior to appointment, except fees
+                        {% elif booking.cancellation_policy_id == 4 %}
+                            Strict: 50% refund up until 4 days prior to appointment, except fees
+                        {% else %}
+                            {{ booking.cancellation_policy.cancellation_type }}: {{ booking.cancellation_policy.percent }}% refund up until {{ days_before }} days prior to appointment, except fees
+                        {% endif %}
+                    </span>
+                </li>
+                <li>I agree with <a href="">Terms and Conditions</a>,<a href="">Privacy Policy</a> and <a href="">Cancellation Policy</a></li>
+                <li>
+                <form method="POST" action="{% url 'payment' %}">
+                    {% csrf_token %}
+                    <input type="hidden" id="snumber" name="sn">
+                    <input type="submit" class="custom_button" value='Book it'></li>
+                </form>
+            </ul>
+        </div>
+    {% endblock content %}
+
+    {% block scripts %}
+    <script type="text/javascript">
+
+    $(".payments .providers").click(function(){
+        $(this).parent().children().removeClass("active");
+        $(this).addClass("active");
+    });
+
+    start_time = moment({{booking.start_time}}*1000).format('MM/DD/YYYY, h:mm a');
+    end_time = moment({{booking.end_time}}*1000).format('MM/DD/YYYY, h:mm a');
+    $('.start_time span').text(start_time);
+    $('.end_time span').text(end_time);
+    $('#snumber').val(document.URL.split('sn=')[1])
+
+    $.getJSON(
+        'http://maps.googleapis.com/maps/api/geocode/json?latlng=' + position.latitude +
+         ',' + position.longitude + '&sensor=false',
+
+        function(data){
+            console.log(data)
+    });
+
+    </script>
+
+    {% endblock scripts %}
+    </body>
+</html>

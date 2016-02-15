@@ -1,0 +1,28 @@
+{% extends "master.html" %}
+{% load i18n %}
+
+{% block meta %}
+    <title>Partytask – booking platform for top event professionals and service providers - Cancelled Payment</title>
+{% endblock meta %}
+
+    {% block content %}
+<div id="content">
+    <div class="header">
+        <span>OH NO!</span>
+    </div>
+
+    <div class="column">
+        <div class="paypal_land">
+            <div class="error">
+                <div class="icon not_ok"></div>
+                Your payment was unsuccessful. Reason: Unknown.
+            </div>   
+            <div class="info">
+                Please try again later with different credit/debit card or PayPal account.
+            </div>
+        </div>
+    </div>
+</div>
+    {% endblock content %}
+</body>
+</html>

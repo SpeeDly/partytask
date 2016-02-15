@@ -1,0 +1,44 @@
+{% extends "master.html" %}
+{% load i18n %}
+{% load thumbnail %}
+
+{% block meta %}
+    <title>Partytask – booking platform for top event professionals and service providers - Artist Settings</title>
+{% endblock meta %}
+
+{% block stylesheets %}
+    <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}/css/select2.css">
+    <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}/css/imgselectarea.css">
+{% endblock stylesheets %}
+
+    {% block content %}
+<div id="content">
+    <div class="header">
+        <span>SETTINGS</span>
+    </div>
+
+    {% block msg %}
+
+    {% endblock msg %}
+    
+    <div class="column">
+        <div class="head">
+            <ul>
+                <li><a href="{% url 'edit_artist_profile' %}"{% if 'profile' in request.path %} class="active"{% endif %}>PROFILE</a></li>
+                <li><a href="{% url 'edit_artist_account' %}"{% if 'account' in request.path %} class="active"{% endif %}>ACCOUNT</a></li>
+                <li><a href="{% url 'artist_schedule' %}"{% if 'schedule' in request.path %} class="active"{% endif %}>SCHEDULE</a></li>
+                <li><a href="{% url 'artist_cancellation_policy' %}"{% if 'policy' in request.path %} class="active"{% endif %}>POLICY</a></li>
+                <li><a href="{% url 'artist_payments' %}"{% if 'payments' in request.path %} class="active"{% endif %}>PAYMENTS</a></li>
+            </ul>
+        </div>
+        {% block settings %}
+        {% endblock settings %}
+    </div>
+</div>
+
+    {% endblock content %}
+
+    {% block scripts %}
+    {% endblock scripts %}
+</body>
+</html>

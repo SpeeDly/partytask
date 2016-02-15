@@ -1,0 +1,100 @@
+{% extends "master.html" %}
+{% load i18n %}
+
+{% block meta %}
+    <title>Partytask – booking platform for top event professionals and service providers - Upload Listing</title>
+{% endblock meta %}
+
+{% block stylesheets %}
+    <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}/css/select2.css">
+    <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}/css/jquery-ui.css">
+
+{% endblock stylesheets %}
+
+    {% block content %}
+<div id="content">
+    <div class="header">
+        <span>ADD NEW LISTING</span>
+    </div>
+
+    <div class="column">
+
+        <div class="forms">
+            <form class="login listing_upload" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <ul>
+                    <li id="gallery_preview" class="multiple_listing">
+                        <ul>
+                            
+                        </ul>
+                    </li>
+
+                    <li class="photos_upload">
+                        {% if form.cover.errors %}
+                            <div class="wrong_picture">{{ form.cover.errors }}</div>
+                        {% endif %}
+                        <div class="upload_button">Click here to upload picture</div>
+                        <input type="file" name="pictures" id="id_picture" class="custom_button active_input" multiple/>
+                        {{ form.cover }}
+                    </li>
+                    <li><label for="" class="main_label">
+                        {% if form.title.errors %}
+                            {{ form.title.errors }}
+                        {% endif %}
+                        Title</label></li>
+                    <li>
+                        {{ form.title }}
+                    </li>
+                    <li><label for="" class="main_label">
+                        {% if form.description.errors %}
+                            {{ form.description.errors }}
+                        {% endif %}
+                        Description</label></li>
+                    <li>
+                        {{ form.description }}
+                    </li>
+                    <li></li>
+                    <li class="price"><label for="" class="main_label">
+                        {% if form.price.errors %}
+                            {{ form.price.errors }}
+                        {% endif %}
+                        Price</label>
+                    </li>
+                    <li class="price">
+                        {{ form.price }}
+                    </li>
+                    <li class="style"><label for="" class="main_label">
+                        {% if form.duration.errors %}
+                            {{ form.duration.errors }}
+                        {% endif %}
+                        Duration</label>{{ form.duration }}</li>
+                    <li><label for="" class="main_label">
+                        {% if form.tags.errors %}
+                            {{ form.tags.errors }}
+                        {% endif %}
+                        Tags</label></li>
+                    <li>
+                        {{ form.tags }}
+                    </li>
+
+                    <li>
+                        <input type="submit" value="Save and continue">
+                    </li>
+
+                </ul>
+            </form>
+        </div>
+
+    </div>
+</div>
+
+    {% endblock content %}
+    {% block scripts %}
+        <script src="{{STATIC_URL}}js/error.js"></script>
+        <script src="{{STATIC_URL}}js/preview.js"></script>
+        <script type="text/javascript" src="{{STATIC_URL}}js/select2.js"></script>
+        <script type="text/javascript" src="{{STATIC_URL}}js/upload_listing.js"></script>
+    {% endblock scripts %}
+</body>
+</html>

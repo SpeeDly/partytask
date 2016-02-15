@@ -1,0 +1,191 @@
+{% extends "master.html" %}
+{% load i18n %}
+{% load thumbnail %}
+
+    {% block stylesheets %}
+    <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}/css/rateit.css">
+    {% endblock stylesheets %}
+
+    {% block content %}
+<div id="content">
+    <div class="header">
+        <span>ARTIST PROFILE</span>
+    </div>
+
+    <div class="column">
+        {% if not artist.description == None %}
+            <div class="description">
+                {{ artist.description }}
+            </div>
+        {% endif %}
+        <div id="artist_profile">
+            <ul class="artist_char">
+                <li>
+                    {% thumbnail artist.get_avatar "150x150" crop="center" as im %}
+                        <img src="{{ im.url }}">
+                    {% empty %}
+                        <img src="{{ STATIC_URL }}img/150x150.gif">
+                    {% endthumbnail %}
+                </li>
+                <li>{{artist.user.username}}</li>
+                <li class="rating">
+                    <div class="rateit bigstars" data-rateit-value="{{ artist.rating }}" data-rateit-ispreset="true" data-rateit-readonly="true" data-rateit-starwidth="26" data-rateit-starheight="26"></div>
+                </li>
+                <li class="type_style {{artist.get_style|lower}}">{{artist.get_style}} artist</li>
+                {% if request.user.is_authenticated %}
+                <li>
+                    {% if request.user.artist == artist %}
+                        <a href="/artists/settings/profile" class="edit">Settings</a>
+                    {% elif is_sub %}
+                        <a href="/salons/artists/settings/{{ artist.id }}" class="edit">Settings</a>
+                    {% else %}
+                        {% if is_follower %}
+                            <a href="?followed=0" class="followed">Followed</a>
+                        {% else %}
+                            <a href="?followed=1&current_time={% now 'U' %}" class="follow">Follow</a>
+                        {% endif %}
+                    {% endif %}
+                </li>
+                {% endif %}
+            </ul>
+            <div class="clear"></div>
+            <ul class="bottom_line artist">
+                <li class="active">REVIEWS(0)</li>
+                <li>LISTINGS({{listings|length}})</li>
+                <li>FOLLOWERS({{profiles|length}})</li>
+                <li>LOCATION</li>
+            </ul>
+            <div class="clear"></div>
+
+            <div class="reviews">
+
+            </div>
+
+            <div class="listings">
+            <ul class="gallery">
+                {% for listing in listings %}
+                <li class="pic_view">
+                    <ul>
+                        <li class="price">$ {{ listing.price|floatformat:-3 }}</li>
+                        <li class="picture">
+                        <a href="/listings/{{listing.metadata}}">
+                            {% thumbnail listing.get_picture "240x143" crop="center" as im %}
+                                <img src="{{ im.url }}">
+                            {% empty %}
+                                tc
+                            {% endthumbnail %}
+                        </a>
+                        </li>
+                        <li class="text">
+                            <div class="title">{{ listing.title }}</div>
+                            <p>
+                                <div class="heart">{{ listing.likes }}</div>
+                                <div class="comments">{{ listing.comments }}</div>
+                            </p>
+                        </li>
+                    </ul>
+                </li>
+                {% endfor %}
+            </ul>
+            </div>
+
+            <div class="followers">
+            <ul>
+            {% for profile in profiles %}
+                <li class="followed">
+                    <a href="/users/profile/{{ profile.id }}">
+                    <ul>
+                        <li class="avatar">
+                            {% thumbnail profile.get_avatar "90x90" crop="center" as im %}
+                                <img src="{{ im.url }}">
+                            {% empty %}
+                                <img src="{{ STATIC_URL }}img/50x50.gif">
+                            {% endthumbnail %}
+                        </li>
+                        <li class="name">{{ profile.user.username }}</li>
+                    </ul>
+                    </a>
+                </li>
+            {% endfor %}
+            </ul>
+            </div>
+
+            <div id="location">
+                
+            </div>
+
+        </div>
+    </div>
+</div>
+
+    {% endblock content %}
+
+    {% block scripts %}
+        <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?libraries=places&sensor=false"></script>
+        <script src="{{STATIC_URL}}js/jquery.rateit.min.js"></script>
+        <script type="text/javascript">
+        $(document).ready(function(){
+            var map_canvas = document.createElement('div');
+            map_canvas.id = 'map_canvas';
+            map_canvas.style.height = '310px';
+            map_canvas.style.width = '960px';
+
+            document.getElementById('location').appendChild(map_canvas);
+
+            var coords = new google.maps.LatLng({{ artist.lat }}, {{ artist.lng }});
+            
+            var options = {
+                zoom: 17,
+                center: coords,
+                mapTypeControl: false,
+                navigationControlOptions: {
+                    style: google.maps.NavigationControlStyle.SMALL
+                },
+                mapTypeId: google.maps.MapTypeId.ROADMAP
+            };
+            
+            var map = new google.maps.Map(document.getElementById("map_canvas"), options);
+            var marker = new google.maps.Marker({
+                position: coords,
+                map: map,
+                title:"You are here!",
+            });
+            $('.reviews').show();
+            $('.listings').hide();
+            $('.followers').hide();
+            $('#location').hide();
+            $ ("#artist_profile .bottom_line li").click(function(){
+                $(this).parent().children().removeClass("active");
+                $(this).addClass("active")
+                if ($(this).index() == 0){
+                    $('.reviews').show();
+                    $('.listings').hide();
+                    $('.followers').hide();
+                    $('#location').hide();
+                }
+                else if($(this).index() == 1){
+                    $('.reviews').hide();
+                    $('.listings').show();
+                    $('.followers').hide();
+                    $('#location').hide();
+                }
+                else if ($(this).index() == 2){
+                    $('.reviews').hide();
+                    $('.listings').hide();
+                    $('.followers').show(); 
+                    $('#location').hide();
+                }
+                else{
+                    $('.reviews').hide();
+                    $('.listings').hide();
+                    $('.followers').hide(); 
+                    $('#location').show();
+                    google.maps.event.trigger(map, "resize");
+                    map.setCenter(coords);
+                }
+            });
+        });
+        </script>
+    {% endblock scripts %}
+</body>
+</html>

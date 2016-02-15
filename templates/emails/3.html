@@ -1,0 +1,24 @@
+{% load i18n %}
+<html>
+    <head>
+    </head>
+    <body>
+        <table>
+    
+            <tbody>
+            <tr>
+            <td>
+                {% blocktrans with first_name=user.first_name %}
+                <p>Hi {{ first_name }},</p>
+                <p>Long time no see! Let us remind you that hundreds of vendors waiting for you to book them!</p>
+                <p>We are waiting for you too!</p>
+                <p>Partytask Team</p>
+                {% endblocktrans %}
+            </td>
+            </tr>
+            </tbody>
+        </table>
+        
+    </body>
+
+</html>

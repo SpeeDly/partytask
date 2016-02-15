@@ -1,0 +1,48 @@
+{% extends "master.html" %}
+{% load thumbnail %}
+{% load i18n %}
+
+{% block meta %}
+    <title>Partytask – booking platform for top event professionals and service providers - Home</title>
+{% endblock meta %}
+
+{% block stylesheets %}
+{% endblock stylesheets %}
+
+    {% block title %}
+        <a href="/" style="display: inline-block;"><img src="{{STATIC_URL}}img/logo.png" style="margin-top: 10px;"></a>
+    {% endblock title %}
+
+    {% block content %}
+
+    <div class="column">
+        <a href="/venues" class="home venues"><div class="new_button white">VENUES</div></a>
+        <a href="/catering" class="home catering"><div class="new_button white">CATHERING</div></a>
+        <a href="/drinks" class="home drinks"><div class="new_button white">DRINKS</div></a>
+        <a href="/music" class="home music"><div class="new_button white">MUSIC</div></a>
+        <a href="/entertainment" class="home entertainment"><div class="new_button white">ENTERTAINMENT</div></a>
+        <a href="/equipment" class="home equipment"><div class="new_button white">EQUIPMENT</div></a>
+        <a href="/decoration" class="home decoration"><div class="new_button white">DECORATION</div></a>
+        <a href="/party_goods" class="home party_goods"><div class="new_button white">PARTY GOODS</div></a>
+    </div>
+
+    {% endblock content %}
+    {% block scripts %}
+    <script>
+    $(document).ready(function(){
+        function fixImages(){
+            var w = $(document).width();
+            var h = $(document).height();
+            h = h - 100;
+            var $home = $(".column .home");
+            $home.height(h/3).find("div.new_button").css({"top": h/6-20, "left": w/2-70});
+        }
+        fixImages();
+        $( window ).resize(function() {
+            fixImages();
+        });
+    })
+    </script>
+    {% endblock scripts %}
+</body>
+</html>

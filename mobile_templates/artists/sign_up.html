@@ -1,0 +1,409 @@
+{% extends "master.html" %}
+{% load thumbnail %}
+{% load i18n %}
+
+{% block meta %}
+    <title>Partytask – booking platform for top event professionals and service providers - Sign Up</title>
+{% endblock meta %}
+
+{% block stylesheets %}
+    <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}/css/select2.css">
+    <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}/css/imgselectarea.css">
+{% endblock stylesheets %}
+
+    {% block title %}
+        Register
+    {% endblock title %}
+
+    {% block content %}
+
+    <div class="column">
+
+        <ul class="progressbar forms">
+            <li class="active"><span></span></li>
+            <li {% if request.GET.step == '2' or request.GET.step == '3' or request.GET.step == '4' %}class="active"{% endif %}><span></span></li>
+            <li {% if request.GET.step == '3' or request.GET.step == '4' %}class="active"{% endif %}><span></span></li>
+            <li {% if request.GET.step == '4' %}class="active"{% endif %}><span></span></li>
+        </ul>
+        
+        <form id="forms" {% if request.GET.step != '1' %}style="display: none"{% endif %} method="POST">
+            {% csrf_token %}
+            <ul>
+                <li class="odd"><label for="" class="main_label">
+                    {% if form.name.errors %}
+                        {{ form.name.errors }}
+                    {% endif %}
+                    Name</label></li>
+                <li class="even">
+                    {{ form.name }}
+                </li>
+                <li class="odd"><label for="" class="main_label">
+                    {% if form.email.errors %}
+                        {{ form.email.errors }}
+                    {% endif %}
+                    Email</label></li>
+                <li class="even">
+                    {{ form.email }}
+                </li>
+                <li class="odd"><label for="" class="main_label">
+                    {% if form.password.errors %}
+                        {{ form.password.errors }}
+                    {% endif %}
+                    Password</label></li>
+                <li class="even">
+                    {{ form.password }}
+                </li>
+                <li class="odd"><label for="" class="main_label">
+                    {% if form.confirm_password.errors %}
+                        {{ form.confirm_password.errors }}
+                    {% endif %}
+                    Confirm Password</label></li>
+                <li class="even">
+                    {{ form.confirm_password }}
+                </li>
+                <li>
+                    <input type="submit" class="submit gray" value="Register">
+                </li>
+                <li class="or">
+                    <div></div>
+                    <div class="or"> OR </div>
+                </li>
+                <li class="facebook">
+                    <div class="facebook_icon"></div>
+                    <input type="button" class="facebook_button" value="Register using Facebook" onclick="register_me('artist')">
+                    <div class="fb-login-button" data-perms="email" data-scope="email" data-max-rows="1" data-show-faces="false"></div>
+                    <div id="fb-root"></div>
+                </li>
+            </ul>
+        </form>
+        <form id="forms" class="m_step2" {% if request.GET.step != '2' %}style="display: none"{% endif %} method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <ul>
+                <li class="odd"><label for="" class="main_label">
+                    {% if form.style.errors %}
+                        {{ form.style.errors }}
+                    {% endif %}
+                    1. What is your business?</label></li>
+                <li class="even">
+                    {{ form.style }}
+                </li>
+                <li class="odd"><label for="" class="main_label">
+                    {% if form.avatar.errors %}
+                        {{ form.avatar.errors }}
+                    {% endif %}
+                    {{form.cropped_image}}
+                    2. Upload profile picture</label></li>
+                <li class="avatar_upload">
+                    {% thumbnail request.user.artist.get_avatar "150x150" crop="center" as im %}
+                        <img id="preview" src="{{ im.url }}">
+                    {% endthumbnail %}
+                    <div class="upload_button">Click here to upload picture</div>
+                    {{ form.avatar}}
+                </li>
+                <li class="odd"><label for="" class="main_label">
+                    {% if form.description.errors %}
+                        {{ form.description.errors }}
+                    {% endif %}
+                    3. Introduce yourself</label></li>
+                <li>
+                    {{ form.description }}
+                </li>
+                <li>
+                    <input type="submit" class="gray submit" value="Save and continue">
+                </li>
+            </ul>
+        </form>
+        <form id="forms" class="login" method="POST" {% if request.GET.step != '3' %}style="display: none"{% endif %}>
+            {% csrf_token %}
+            <ul>
+                <li class="odd"><label for="" class="main_label">
+                    {% if form.address.errors %}
+                        {{ form.address.errors }}
+                    {% endif %}
+                    1. Submit your location</label></li>
+                <li class="even"><label for="" class="main_label">
+                    {{ form.address }}
+                    {{ form.lat }}
+                    {{ form.lng }}
+                </label></li>
+                <li id="maps">
+                </li>
+
+                <li>
+
+                </li>
+
+                <li class="odd"><label for="" class="main_label">
+                    {% if form.mobile_number.errors %}
+                        {{ form.mobile_number.errors }}
+                    {% endif %}
+                    2. Enter your phone number</label></li>
+                <li class="even">
+                    {{ form.mobile_number }}
+                </li>
+
+                <li>
+                    <input type="submit" class="gray submit" value="Save and continue">
+                </li>
+            </ul>
+        </form>
+
+        <form id="forms" class="login listing_upload" method="POST" enctype="multipart/form-data" {% if request.GET.step != '4' %}style="display: none"{% endif %}>
+            {% csrf_token %}
+            <ul>
+                <li id="gallery_preview" class="multiple_listing">
+                    <ul>
+                    </ul>
+                </li>
+                <li class="photos_upload">
+                    {% if form.cover.errors %}
+                        <div class="wrong_picture">{{ form.cover.errors }}</div>
+                    {% endif %}
+                    <div class="upload_button">Click here to upload picture</div>
+                    <input type="file" name="pictures" id="id_picture" class="custom_button active_input" multiple/>
+                    {{ form.cover }}
+                </li>
+                <li><label for="" class="main_label">
+                    {% if form.title.errors %}
+                        {{ form.title.errors }}
+                    {% endif %}
+                    1. Title</label></li>
+                <li>
+                    {{ form.title }}
+                </li>
+                <li><label for="" class="main_label">
+                    {% if form.description.errors %}
+                        {{ form.description.errors }}
+                    {% endif %}
+                    2. Description</label></li>
+                <li>
+                    {{ form.description }}
+                </li>
+                <li></li>
+                <li class="price"><label for="" class="main_label">
+                    {% if form.price.errors %}
+                        {{ form.price.errors }}
+                    {% endif %}
+                    3. Price</label>
+                </li>
+                <li class="price">
+                    {{ form.price }}
+                </li>
+                <li class="style"><label for="" class="main_label">
+                    {% if form.duration.errors %}
+                        {{ form.duration.errors }}
+                    {% endif %}4. Duration</label>
+                    {{ form.duration }}</li>
+
+                <li class="gender"><label for="" class="main_label">
+                    {% if form.gender.errors %}
+                        {{ form.gender.errors }}
+                    {% endif %}4. Type</label>
+                    {{ form.gender }}
+                </li>
+                <li></li>
+
+                <li><label for="" class="main_label">
+                    {% if form.tags.errors %}
+                        {{ form.tags.errors }}
+                    {% endif %}
+                    5. Tags</label></li>
+                <li>
+                    {{ form.tags }}
+                </li>
+
+                <li>
+                    <input type="submit" class="gray submit" value="Save and continue">
+                </li>
+            </ul>
+        </form>
+
+    </div>
+</div>
+
+    {% endblock content %}
+    {% block scripts %}
+        <script src="{{STATIC_URL}}js/error.js"></script>
+        <script src="{{STATIC_URL}}js/preview.js"></script>
+        <script src="http://connect.facebook.net/en_US/all.js"></script>
+        <script src="{{STATIC_URL}}js/facebook.js"></script>
+        <script type="text/javascript" src="{{STATIC_URL}}js/upload_listing.js"></script>
+        <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?libraries=places&sensor=false"></script>
+        <script type="text/javascript" src="{{STATIC_URL}}js/google_maps_controller.js"></script>
+        <script type="text/javascript">
+        var iter = true;
+
+$("#id_avatar").change(function(){
+    read_url(this);
+});
+
+
+function read_url(input) {
+
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+
+    if (iter){
+        if($('.avatar div').length === 0)
+            $('.upload_button').parent().find("#preview").remove().end().prepend("<canvas id='preview' width='165px' height='165px'></canvas>");
+        else
+            $('.avatar div').append("<canvas id='preview' width='165px' height='165px' style='margin-left:0px'></canvas>");
+        iter = false;
+    }
+
+        reader.onload=function(e){
+            draw_image(e.target.result);
+        };
+
+        reader.readAsDataURL(input.files[0]);
+    }
+
+}
+
+
+$("#step_2").submit(function(){
+    if($('canvas')[0])
+        $('#id_cropped_image')[0].value = $('canvas')[0].toDataURL();
+});
+
+$("#forms.m_step2").submit(function(){
+    if($('canvas')[0])
+        $('#id_cropped_image')[0].value = $('canvas')[0].toDataURL();
+});
+
+$("#settings").submit(function(e){
+    if($('canvas')[0])
+        $('#id_cropped_image')[0].value = $('canvas')[0].toDataURL();
+});
+
+
+function draw_image(img){
+    
+    src = img;
+
+    canvas = document.getElementById("preview");
+    var canvas_img=new Image();
+    var ctx=canvas.getContext("2d");
+    canvas_img.onload=function(){
+
+        x1 = 0;
+        y1 = 0;
+        s_width = this.width;
+        s_height = this.height;
+        ctx.drawImage(canvas_img,x1,y1,s_width,s_height,0,0,165,165);
+    };
+    canvas_img.src = src;
+}
+
+function clear_all(){
+    
+    $('#img_container').remove();
+    $(".avatar div img").remove();
+    $('div[class^=imgareaselect-]').hide();
+}
+
+
+$("#id_picture").change(function(){
+    read_url2(this);
+});
+
+
+function read_url2(input) {
+
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+
+    if (iter){
+        $('#upload_listing').append("<canvas class='listing' width='492' height='277'></canvas>");
+        iter = false;
+    }
+
+        reader.onload=function(e){
+            draw_image2(e.target.result);
+        };
+
+        reader.readAsDataURL(input.files[0]);
+    }
+
+}
+
+// Tools for listing edit
+
+var img_canvas = null;
+var img_ctx = null;
+var rot = $('#id_rotated');
+var img_src;
+
+function draw_image2(src){
+
+    canvas = $('.listing')[0];
+    var canvas_img = new Image();
+    var ctx = canvas.getContext("2d");
+    canvas_img.onload=function(){
+        ctx.drawImage(canvas_img,0,0,canvas_img.width,canvas_img.height,0,0,492,277);
+    };
+    canvas_img.src = src;
+    img_src = src;
+
+    img_ctx = ctx;
+    img_canvas = canvas_img;
+}
+
+    var angleInDegrees = 0;
+    
+    $(".rotate_right").click(function(e){
+        angleInDegrees += 90;
+
+        if(parseInt(rot.val()) == 3)
+            rot.val(0);
+        else
+            rot.val(parseInt(rot.val())+1);
+        
+        drawRotated(angleInDegrees);
+    });
+
+    $(".rotate_left").click(function(){
+        angleInDegrees -= 90;
+
+        if(parseInt(rot.val()) == 0)
+            rot.val(3);
+        else
+            rot.val(parseInt(rot.val())-1);
+
+        drawRotated(angleInDegrees);
+    });
+
+    function drawRotated(degrees){
+        canvas = $('.listing')[0]; 
+        img_ctx.clearRect(0,0,canvas.width,canvas.height);
+        img_ctx.save();
+        img_ctx.translate(canvas.width/2,canvas.height/2);
+        img_ctx.rotate(degrees*Math.PI/180);
+        -img_canvas.width/2,-img_canvas.height/2
+        if(rot.val() == 0 || rot.val() == 2)
+            img_ctx.drawImage(img_canvas, 0, 0, img_canvas.width, img_canvas.height, -492/2, -277/2, 492, 277);
+        else
+            img_ctx.drawImage(img_canvas, 0, 0, img_canvas.width, img_canvas.height, -277/2, -492/2, 277, 492);
+
+        img_ctx.restore();
+        console.log(rot.val())
+    }
+
+
+$('li.nav.crop').click(function(){
+    if($('#upload_listing canvas')[0])
+    {
+        $("body").append('<div id="img_container" class="second"><div class="forms crop_me"><div class="text">Please drag the circle around your face and save your selection</div><img style="width: 100%; height: auto;" id="img_crop" src='+img_src+' style="position: relative;"></img><input type="button" class="custom_button" onclick="clear_all()" value="Save selection"></div></div>');
+
+        $('img#img_crop').imgAreaSelect({
+            handles: true,
+            aspectRatio: '16:9',
+            fadeSpeed: 200,
+            onSelectEnd: draw_image,
+        });
+    }
+});
+        </script>
+    {% endblock scripts %}
+</body>
+</html>

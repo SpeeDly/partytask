@@ -1,0 +1,39 @@
+{% extends "master.html" %}
+{% load thumbnail %}
+{% load i18n %}
+
+    {% block meta %}
+        <title>Partytask – booking platform for top event professionals and service providers - Bookings</title>
+    {% endblock meta %}
+
+    {% block title %}
+        Wallet
+    {% endblock title %}
+
+    {% block content %}
+
+<div id="wallet">
+    <ul class="head">
+        <li>All EARNINGS:<br/>$ {{ all_earnings|floatformat:-3 }}</li>
+        <li>All WITHDRAWS:<br/>$ {{ all_widthraws|floatformat:-3 }}</li>
+        <li>AVAILABLE FUNDS:<br/>$ {{ avaible_funds|floatformat:-3 }}</li>
+    </ul>
+    <ul class="transactions">
+        {% for t in transactions %}
+            <li class="transaction">
+                <p><span>Date and time: </span> {{ t.created }}</p>
+                <p><span>Price: </span>$ {{ t.money|floatformat:-3 }}</p>
+                <p><span>Paid to: </span>{{ t.get_method }}</p>
+                <p><span>Status: </span>{{ t.get_status }}</p>
+            </li>
+        {% empty %}
+        <li class="nothing">There is no activity yet.</li>
+        {% endfor %}
+    </ul>
+</div>
+    {% endblock content %}
+
+    {% block scripts %}
+    {% endblock scripts %}
+</body>
+</html>
